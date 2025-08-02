@@ -1,0 +1,9 @@
+{
+    "name": "cubic-yards-calculator",
+    "version": "1.0.0",
+    "description": "Cubic Yards Calculator",
+    "main": "index.html",
+    "scripts": {
+      "start": "serve -s ."
+    }
+  }
