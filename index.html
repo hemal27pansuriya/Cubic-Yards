@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Cubic Yards Calculator - Volume Calculator for Construction Materials
+    </title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">Cubic Yards Calculator</h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Calculator -->
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="calculator-container">
+            <h2
+              class="mb-4"
+              style="color: var(--primary-color); font-weight: 700"
+            >
+              <i class="fas fa-calculator me-2"></i>Volume Calculator
+            </h2>
+
+            <!-- Shape Selector -->
+            <div class="mb-4">
+              <label class="label-modern">Select Area Shape:</label>
+              <div class="shape-selector">
+                <div class="shape-card" data-shape="square">
+                  <i class="fas fa-square shape-icon"></i>
+                  <div class="shape-name">Square</div>
+                </div>
+                <div class="shape-card" data-shape="rectangle">
+                  <i class="fas fa-rectangle-wide shape-icon"></i>
+                  <div class="shape-name">Rectangle</div>
+                </div>
+                <div class="shape-card" data-shape="rectangle-border">
+                  <i class="far fa-square shape-icon"></i>
+                  <div class="shape-name">Rectangle Border</div>
+                </div>
+                <div class="shape-card" data-shape="circle">
+                  <i class="fas fa-circle shape-icon"></i>
+                  <div class="shape-name">Circle</div>
+                </div>
+                <div class="shape-card" data-shape="circle-border">
+                  <i class="far fa-circle shape-icon"></i>
+                  <div class="shape-name">Circle Border</div>
+                </div>
+                <div class="shape-card" data-shape="annulus">
+                  <i class="fas fa-ring shape-icon"></i>
+                  <div class="shape-name">Annulus</div>
+                </div>
+                <div class="shape-card" data-shape="triangle">
+                  <i
+                    class="fas fa-play shape-icon"
+                    style="transform: rotate(-90deg)"
+                  ></i>
+                  <div class="shape-name">Triangle</div>
+                </div>
+                <div class="shape-card" data-shape="trapezoid">
+                  <i
+                    class="fas fa-square shape-icon"
+                    style="transform: perspective(10px) rotateX(10deg)"
+                  ></i>
+                  <div class="shape-name">Trapezoid</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Input Fields -->
+            <div id="input-fields" class="fade-in">
+              <!-- Fields will be populated by JavaScript -->
+            </div>
+
+            <!-- Cost Calculator -->
+            <div class="cost-calculator">
+              <h5 style="color: #f97316; margin-bottom: 1rem">
+                <i class="fas fa-dollar-sign me-2"></i>Optional Cost Calculation
+              </h5>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="input-group-modern">
+                    <label class="label-modern">Price:</label>
+                    <div class="input-row">
+                      <select class="unit-selector" id="currency">
+                        <option value="$">$</option>
+                        <option value="€">€</option>
+                        <option value="£">£</option>
+                      </select>
+                      <input
+                        type="number"
+                        class="form-control-modern"
+                        id="price"
+                        step="0.01"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group-modern">
+                    <label class="label-modern">Per Cubic:</label>
+                    <select class="form-control-modern" id="price-unit">
+                      <option value="yard">yard (yd³)</option>
+                      <option value="foot">foot (ft³)</option>
+                      <option value="meter">meter (m³)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="input-group-modern">
+              <label class="label-modern">Quantity:</label>
+              <input
+                type="number"
+                class="form-control-modern"
+                id="quantity"
+                value="1"
+                min="1"
+              />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-3 flex-wrap">
+              <button class="btn-calculate flex-fill" id="calculate-btn">
+                <i class="fas fa-calculator me-2"></i>Calculate
+              </button>
+              <button class="btn-clear" id="clear-btn">
+                <i class="fas fa-eraser me-2"></i>Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <!-- Shape Diagram -->
+          <div class="shape-diagram">
+            <h5 style="color: var(--primary-color); margin-bottom: 1rem">
+              Shape Diagram
+            </h5>
+            <div id="shape-svg-container">
+              <p style="color: #6b7280">Select a shape to see diagram</p>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div id="results-section" style="display: none">
+            <div class="results-container">
+              <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Results</h4>
+              <div id="results-content">
+                <!-- Results will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theory Section -->
+    <div class="container">
+      <div class="theory-section">
+        <p>
+          Calculate cubic yards volume for landscape material, mulch, fill,
+          gravel, cement or containers. Enter dimensions in US units (inches or
+          feet) or metric units (centimeters or meters) to calculate the cubic
+          yards, cubic feet and cubic meters. Also calculate the cost of
+          materials when you enter the price per cubic foot, price per cubic
+          yard or price per cubic meter.
+        </p>
+        <p>
+          Enter measurements in US units or metric units. Calculate volume from
+          your measurements in inches (in), feet (ft), yards (yd), centimeters
+          (cm), or meters (m). You can also enter decimal values. For example,
+          if you have one measurement that is 7'3" you can enter that as 7.25
+          feet (3"/12" = 0.25 ft). If you have a measurement of 245 cm you can
+          also enter that as 2.45 m.
+        </p>
+        <p>
+          If you have an area in square feet you can still calculate cubic
+          yards. In the calculator, select Rectangle. Enter your square feet in
+          the Length field, and enter "1" in the Width field. Enter how deep you
+          want the fill in the Depth field. Click "Calculate" and your answer
+          will be shown in cubic yards.
+        </p>
+        <h2 class="theory-title">
+          How to Calculate Cubic Yards using feet and inches
+        </h2>
+        <div class="theory-content">
+          <h3>Measure</h3>
+          <ul>
+            <li>Measure your area in feet</li>
+            <li>
+              Determine the depth of your material, say mulch, that you will put
+              on this area generally using depth in inches
+            </li>
+          </ul>
+
+          <h3>Convert all of your measurements to feet</h3>
+          <ul>
+            <li>If you measured in feet only skip to "Calculate"</li>
+            <li>
+              If you measured in feet & inches, divide inches by 12 and add that
+              to your feet measure to get total feet
+            </li>
+            <li>
+              If you measured in inches only, divide inches by 12 and that is
+              your measurement in feet
+            </li>
+          </ul>
+
+          <h3>Calculate Cubic Yards</h3>
+          <ul>
+            <li>Calculate your area</li>
+            <li>
+              Calculate your volume: Multiply area times the depth to get volume
+              in cubic feet
+            </li>
+            <li>
+              Calculate your volume: Multiply area times the depth to get volume
+              in cubic feet
+            </li>
+            <li>Where ft2 = square foot, ft3 = cubic foot, yd3 = cubic yard</li>
+          </ul>
+
+          <h3>Cubic Yards Formulas and Area Calculations</h3>
+          <div class="formulas">
+            <div class="shape-box row">
+              <h3>Square Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <rect
+                      x="50"
+                      y="25"
+                      width="100"
+                      height="100"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="100"
+                      y="80"
+                      text-anchor="middle"
+                      font-size="14"
+                      fill="#374151"
+                    >
+                      Side Length
+                    </text>
+                    <line
+                      x1="50"
+                      y1="15"
+                      x2="150"
+                      y2="15"
+                      stroke="#ef4444"
+                      stroke-width="2"
+                      marker-end="url(#arrowhead)"
+                    />
+                    <line
+                      x1="150"
+                      y1="15"
+                      x2="50"
+                      y2="15"
+                      stroke="#ef4444"
+                      stroke-width="2"
+                      marker-start="url(#arrowhead)"
+                    />
+                    <defs>
+                      <marker
+                        id="arrowhead"
+                        markerWidth="10"
+                        markerHeight="7"
+                        refX="9"
+                        refY="3.5"
+                        orient="auto"
+                      >
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+                      </marker>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>Area ft² = Side Length x Side Length = (Side Length)²</p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+              </div>
+            </div>
+            <div class="shape-box row">
+              <h3>Rectangle Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <rect
+                      x="25"
+                      y="40"
+                      width="150"
+                      height="80"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="100"
+                      y="85"
+                      text-anchor="middle"
+                      font-size="14"
+                      fill="#374151"
+                    >
+                      Length
+                    </text>
+                    <text
+                      x="15"
+                      y="85"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                      transform="rotate(-90 15 85)"
+                    >
+                      Width
+                    </text>
+                    <line
+                      x1="25"
+                      y1="30"
+                      x2="175"
+                      y2="30"
+                      stroke="#ef4444"
+                      stroke-width="2"
+                      marker-end="url(#arrowhead)"
+                    />
+                    <line
+                      x1="15"
+                      y1="40"
+                      x2="15"
+                      y2="120"
+                      stroke="#10b981"
+                      stroke-width="2"
+                      marker-end="url(#arrowhead)"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>Area ft² = Length x Width</p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+              </div>
+            </div>
+            <div class="shape-box row">
+              <h3>Rectangle Border Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <rect
+                      x="25"
+                      y="25"
+                      width="150"
+                      height="100"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <rect
+                      x="50"
+                      y="50"
+                      width="100"
+                      height="50"
+                      fill="white"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="100"
+                      y="20"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      Border Width
+                    </text>
+                    <line
+                      x1="50"
+                      y1="15"
+                      x2="25"
+                      y2="15"
+                      stroke="#ef4444"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>Inner Area (ft²) = Length x Width</p>
+                <p>
+                  Total Area (ft²) = (Length + (2 x Border Width)) x (Width + (2
+                  x Border Width))
+                </p>
+                <p>Area (ft²) = Total Area - Inner Area</p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+              </div>
+            </div>
+            <div class="shape-box row">
+              <h3>Circle Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <circle
+                      cx="100"
+                      cy="75"
+                      r="60"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <line
+                      x1="40"
+                      y1="75"
+                      x2="160"
+                      y2="75"
+                      stroke="#ef4444"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="100"
+                      y="85"
+                      text-anchor="middle"
+                      font-size="14"
+                      fill="#374151"
+                    >
+                      Diameter
+                    </text>
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>Area (ft²) = Pi x (Diameter/2)²</p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+                <p>Pi = 3.14</p>
+              </div>
+            </div>
+            <div class="shape-box row">
+              <h3>Circle Border Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <circle
+                      cx="100"
+                      cy="75"
+                      r="60"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <circle
+                      cx="100"
+                      cy="75"
+                      r="30"
+                      fill="white"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="100"
+                      y="110"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      Border Width
+                    </text>
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>Outer Diameter = Inner Diameter + (2 x Border Width)</p>
+                <p>Outer Area (ft²) = Pi x (Outer Diameter/2)²</p>
+                <p>Inner Area (ft²) = Pi x (Inner Diameter/2)²</p>
+                <p>Area (ft²) = Outer Area - Inner Area</p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+                <p>Pi = 3.14</p>
+              </div>
+            </div>
+            <div class="shape-box row">
+              <h3>Annulus Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <circle
+                      cx="100"
+                      cy="75"
+                      r="60"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <circle
+                      cx="100"
+                      cy="75"
+                      r="25"
+                      fill="white"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <line
+                      x1="40"
+                      y1="75"
+                      x2="160"
+                      y2="75"
+                      stroke="#ef4444"
+                      stroke-width="2"
+                    />
+                    <line
+                      x1="75"
+                      y1="75"
+                      x2="125"
+                      y2="75"
+                      stroke="#10b981"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="100"
+                      y="25"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#ef4444"
+                    >
+                      Outer Diameter
+                    </text>
+                    <text
+                      x="100"
+                      y="65"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#10b981"
+                    >
+                      Inner Diameter
+                    </text>
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>Outer Area (ft²) = Pi x (Outer Diameter/2)²</p>
+                <p>Inner Area (ft²) = Pi x (Inner Diameter/2)²</p>
+                <p>Area (ft²) = Outer Area - Inner Area</p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+                <p>Pi = 3.14</p>
+              </div>
+            </div>
+            <div class="shape-box row">
+              <h3>Triangle Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <polygon
+                      points="100,25 50,125 150,125"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="75"
+                      y="80"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      a
+                    </text>
+                    <text
+                      x="125"
+                      y="80"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      b
+                    </text>
+                    <text
+                      x="100"
+                      y="140"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      c
+                    </text>
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>
+                  Area (ft²) = (1/4) x square root[ (a+b+c) x (b+c-a) x (c+a-b)
+                  x (a+b-c) ]
+                </p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+              </div>
+            </div>
+            <div class="shape-box row">
+              <h3>Trapezoid Area</h3>
+              <div class="shape-left col-md-6 col-sm-12">
+                <div class="shape-img">
+                  <svg width="200" height="150" viewBox="0 0 200 150">
+                    <polygon
+                      points="75,40 125,40 150,110 50,110"
+                      fill="#e5e7eb"
+                      stroke="#374151"
+                      stroke-width="2"
+                    />
+                    <text
+                      x="100"
+                      y="35"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      a
+                    </text>
+                    <text
+                      x="100"
+                      y="125"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      b
+                    </text>
+                    <text
+                      x="35"
+                      y="75"
+                      text-anchor="middle"
+                      font-size="12"
+                      fill="#374151"
+                    >
+                      h
+                    </text>
+                    <line
+                      x1="40"
+                      y1="40"
+                      x2="40"
+                      y2="110"
+                      stroke="#10b981"
+                      stroke-width="2"
+                      stroke-dasharray="5,5"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="formula-content col-md-6 col-sm-12">
+                <p>Using measurements in feet:</p>
+                <p>Area (ft²) = ((a + b) / 2 )h</p>
+                <p>Volume ft³ = Depth x Area</p>
+                <p>Volume in Cubic Yards yd³ = Volume ft³ / 27</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>
